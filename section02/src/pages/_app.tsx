@@ -15,5 +15,6 @@ export default function App({
 }: AppProps & { Component: NextPageWithLayout }) {
   const getLayout = Component.getLayout ?? ((page: ReactNode) => page);
 
+  // getLayout이 선언된 컴포넌트만 렌더링 (serach bar)
   return <GlobalLayout>{getLayout(<Component {...pageProps} />)}</GlobalLayout>;
 }
