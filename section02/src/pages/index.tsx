@@ -1,6 +1,8 @@
 // CSS Module
 // unique한 className으로 작성
+import SearchableLayout from "@/components/searchable-layout";
 import style from "./index.module.css";
+import { ReactNode } from "react";
 
 export default function Home() {
   return (
@@ -10,3 +12,8 @@ export default function Home() {
     </>
   );
 }
+
+// ReactNode : React 컴포넌트로 쓰이는 타입
+Home.getLayout = (page: ReactNode) => {
+  return <SearchableLayout>{page}</SearchableLayout>;
+};
