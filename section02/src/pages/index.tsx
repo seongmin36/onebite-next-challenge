@@ -29,9 +29,6 @@ export default function Home({
   allBooks,
   recoBooks,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  console.log(allBooks);
-  console.log(recoBooks);
-
   return (
     <div className={style.container}>
       <section>
