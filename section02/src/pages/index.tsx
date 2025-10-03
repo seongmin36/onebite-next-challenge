@@ -10,9 +10,11 @@ import fetchRandomBooks from "@/lib/fetch-random-books";
 
 // 서버사이드 렌더링 (getServerSideProps() : Next.js에서 약속된 SSR 함수)
 export const getServerSideProps = async () => {
-  // SSR 직렬 연결 1개 실행 후 나머지 실행(단점)
-  const allBooks = await fetchBooks();
-  const recoBooks = await fetchRandomBooks();
+  // 병렬 연결 -> 동시에 실행돼서 실제로 network 탭에서 2ms(직렬) => 1ms(병렬)로 렌더링 속도가 빨라짐
+  const [allBooks, recoBooks] = await Promise.all([
+    fetchBooks(),
+    fetchRandomBooks(),
+  ]);
 
   return {
     props: {
