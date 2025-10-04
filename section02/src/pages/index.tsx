@@ -4,12 +4,14 @@ import SearchableLayout from "@/components/searchable-layout";
 import style from "./index.module.css";
 import { ReactNode } from "react";
 import BookItem from "@/components/book-item";
-import { InferGetServerSidePropsType } from "next";
+import { InferGetStaticPropsType } from "next";
 import fetchBooks from "@/lib/fetch-books";
 import fetchRandomBooks from "@/lib/fetch-random-books";
 
 // 서버사이드 렌더링 (getServerSideProps() : Next.js에서 약속된 SSR 함수)
-export const getServerSideProps = async () => {
+export const getStaticProps = async () => {
+  console.log("인덱스 페이지");
+
   // 병렬 연결 -> 동시에 실행돼서 실제로 network 탭에서 2ms(직렬) => 1ms(병렬)로 렌더링 속도가 빨라짐
   const [allBooks, recoBooks] = await Promise.all([
     fetchBooks(),
@@ -28,7 +30,7 @@ export const getServerSideProps = async () => {
 export default function Home({
   allBooks,
   recoBooks,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+}: InferGetStaticPropsType<typeof getStaticProps>) {
   return (
     <div className={style.container}>
       <section>

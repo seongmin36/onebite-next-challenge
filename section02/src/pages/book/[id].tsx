@@ -5,13 +5,27 @@
 // /123/123/123/123 는 각각의 Id가 배열 형태로 저장됨.
 
 // [[...id]] : id가 없는 url의 경우에도 가능하도록 => Optional Catch All Segement
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+import { GetStaticPropsContext, InferGetStaticPropsType } from "next";
 import style from "./[id].module.css";
 import fetchOneBook from "@/lib/fetch-one-book";
 
-export const getServerSideProps = async (
-  context: GetServerSidePropsContext
-) => {
+// 동적 페이지 [id].tsx에서 SSG 렌더링 방식을 사용하기 위해 동적 경로 함수 getStaticPaths 함수를 생성해줘야 한다.
+// 브라우저 : book/1, 2, 3, ... -> 서버 : book/1, 2, 3, ... .html 파일을준다
+export const getStaticPaths = () => {
+  return {
+    // id는 배열 형태로 저장되기 떄문에 []로 받는다.
+    paths: [
+      { params: { id: "1" } },
+      { params: { id: "2" } },
+      { params: { id: "3" } },
+    ],
+    // fallback 옵션 : 대체, 대비책, 보험 => "(id: 1, 2, 3)이 아니면"의 대비책
+    // false : 404 Not Found 페이지 반환, blocking : 즉시 생성 (SSR), true : 즉시 생성 + 페이지 미리 반환
+    fallback: "blocking",
+  };
+};
+
+export const getStaticProps = async (context: GetStaticPropsContext) => {
   const bookId = context.params!.id;
 
   const book = await fetchOneBook(Number(bookId));
@@ -25,7 +39,7 @@ export const getServerSideProps = async (
 
 export default function Page({
   book,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+}: InferGetStaticPropsType<typeof getStaticProps>) {
   if (!book) return "문제가 발생했습니다. 다시 시도하세요.";
 
   const { title, subTitle, description, author, publisher, coverImgUrl } = book;
