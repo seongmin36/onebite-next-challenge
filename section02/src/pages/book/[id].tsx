@@ -8,6 +8,7 @@
 import { GetStaticPropsContext, InferGetStaticPropsType } from "next";
 import style from "./[id].module.css";
 import fetchOneBook from "@/lib/fetch-one-book";
+import { useRouter } from "next/router";
 
 // 동적 페이지 [id].tsx에서 SSG 렌더링 방식을 사용하기 위해 동적 경로 함수 getStaticPaths 함수를 생성해줘야 한다.
 // 브라우저 : book/1, 2, 3, ... -> 서버 : book/1, 2, 3, ... .html 파일을준다
@@ -19,9 +20,11 @@ export const getStaticPaths = () => {
       { params: { id: "2" } },
       { params: { id: "3" } },
     ],
-    // fallback 옵션 : 대체, 대비책, 보험 => "(id: 1, 2, 3)이 아니면"의 대비책
+    // .next/server/pages/book/1.html 이런식으로 SSG로 저장이 되고, blocking 일떄는 브라우저에서 렌더링시에 저장됨.
+    // fallback : 대체, 대비책, 보험 => "(id: 1, 2, 3)이 아니면"의 대비책
     // false : 404 Not Found 페이지 반환, blocking : 즉시 생성 (SSR), true : 즉시 생성 + 페이지 미리 반환
-    fallback: "blocking",
+    // true : params에 등록되지 않은 url에 대해 일단 html을 먼저 보내주고(Page컴포넌트) + 필요 부분만 서버에서 불러와서 렌더링. (SSR)
+    fallback: true,
   };
 };
 
@@ -29,6 +32,12 @@ export const getStaticProps = async (context: GetStaticPropsContext) => {
   const bookId = context.params!.id;
 
   const book = await fetchOneBook(Number(bookId));
+
+  if (!book) {
+    return {
+      notFound: true,
+    };
+  }
 
   return {
     props: {
@@ -40,7 +49,9 @@ export const getStaticProps = async (context: GetStaticPropsContext) => {
 export default function Page({
   book,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
-  if (!book) return "문제가 발생했습니다. 다시 시도하세요.";
+  const router = useRouter();
+  // fallback 상태일 떄 router.isFallback을 사용
+  if (router.isFallback) return "로딩중입니다.";
 
   const { title, subTitle, description, author, publisher, coverImgUrl } = book;
 
