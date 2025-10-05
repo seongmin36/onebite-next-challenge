@@ -23,8 +23,8 @@ export const getStaticProps = async () => {
       allBooks,
       recoBooks,
     },
-    // ISR 렌더ㅇ
-    revalidate: 3,
+    // ISR 렌더링
+    // revalidate: 3,
   };
 };
 
