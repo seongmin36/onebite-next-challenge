@@ -1,7 +1,7 @@
 import { Book } from "@/types/book";
 
 export default async function fetchBooks(q?: string): Promise<Book[]> {
-  let url = `http://localhost:12345/book`;
+  let url = `https://onebite-book-server-three.vercel.app/book`;
 
   // /book/search url만 추가
   if (q) {
