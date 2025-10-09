@@ -1,7 +1,17 @@
-export default function Page({
+import ClientComponent from "@/components/client-component";
+
+export default async function Page({
   searchParams,
 }: {
-  searchParams: { q: string };
+  searchParams: Promise<{ q: string }>;
 }) {
-  return <div>Search 페이지 {searchParams.q}</div>;
+  const { q } = await searchParams;
+  return (
+    <div>
+      Search 페이지 {q}
+      <ClientComponent>
+        <></>
+      </ClientComponent>
+    </div>
+  );
 }
