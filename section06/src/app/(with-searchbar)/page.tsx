@@ -3,7 +3,6 @@ import style from "./page.module.css";
 import { BookData } from "@/types";
 import delay from "@/utils/delay";
 import { Suspense } from "react";
-import BookItemSkeleton from "@/components/skeleton/book-item-skeleton";
 import BookListSkeleton from "@/components/skeleton/book-list-skeleton";
 
 // 특정 페이지의 유형을 강제로 Static, Dynamic 페이지로 설정
@@ -16,35 +15,30 @@ import BookListSkeleton from "@/components/skeleton/book-list-skeleton";
 
 async function AllBooks() {
   await delay(1500);
-
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_SERVER_URL}/book`,
-      { cache: "force-cache" }
-    );
-    if (!response.ok) {
-      return <div>오류가 발생했습니다...</div>;
-    }
-    const allBooks: BookData[] = await response.json();
-
-    return (
-      <div>
-        {allBooks.map((book) => (
-          <BookItem key={book.id} {...book} />
-        ))}
-      </div>
-    );
-  } catch (e) {
-    console.error(e);
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_SERVER_URL}/book`,
+    { cache: "force-cache" }
+  );
+  if (!response.ok) {
+    return <div>오류가 발생했습니다...</div>;
   }
+  const allBooks: BookData[] = await response.json();
+
+  return (
+    <div>
+      {allBooks.map((book) => (
+        <BookItem key={book.id} {...book} />
+      ))}
+    </div>
+  );
 }
 async function RecoBooks() {
   await delay(3000);
   // cache의 아무 속성이 없으면 no-store가 기본 (Next.js v.15 ~ )
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_SERVER_URL}/book/random`,
+    `${process.env.NEXT_PUBLIC_API_SERVER_URL}/book/random`
     // next: { revalidate: 3 } : 3초 간격으로 fecth (ISR과 유사)
-    { next: { revalidate: 3 } }
+    // { next: { revalidate: 3 } }
   );
   if (!response.ok) {
     return <div>오류가 발생했습니다...</div>;
