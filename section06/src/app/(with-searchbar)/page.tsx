@@ -1,9 +1,10 @@
 import BookItem from "@/components/book-item";
 import style from "./page.module.css";
-import books from "@/mock/books.json";
 import { BookData } from "@/types";
 import delay from "@/utils/delay";
 import { Suspense } from "react";
+import BookItemSkeleton from "@/components/skeleton/book-item-skeleton";
+import BookListSkeleton from "@/components/skeleton/book-list-skeleton";
 
 // 특정 페이지의 유형을 강제로 Static, Dynamic 페이지로 설정
 // 1. auto : 기본값, 아무것도 강제하지 X
@@ -59,6 +60,7 @@ async function RecoBooks() {
   );
 }
 
+// 강제로 Dynamic Render
 export const dynamic = "force-dynamic";
 
 export default function Home() {
@@ -66,13 +68,13 @@ export default function Home() {
     <div className={style.container}>
       <section>
         <h3>지금 추천하는 도서</h3>
-        <Suspense fallback={<div>도서를 불러오는 중입니다 ...</div>}>
+        <Suspense fallback={<BookListSkeleton count={3} />}>
           <RecoBooks />
         </Suspense>
       </section>
       <section>
         <h3>등록된 모든 도서</h3>
-        <Suspense fallback={<div>도서를 불러오는 중입니다 ...</div>}>
+        <Suspense fallback={<BookListSkeleton count={3} />}>
           <AllBooks />
         </Suspense>
       </section>

@@ -1,4 +1,5 @@
 import BookItem from "@/components/book-item";
+import BookListSkeleton from "@/components/skeleton/book-list-skeleton";
 import { BookData } from "@/types";
 import delay from "@/utils/delay";
 import { Suspense } from "react";
@@ -40,7 +41,7 @@ export default async function Page({
 
   return (
     // 자동 스트리밍 설정
-    <Suspense key={q || ""} fallback={<div>Loading...</div>}>
+    <Suspense key={q || ""} fallback={<BookListSkeleton count={3} />}>
       <SearchResult q={q || ""} />
     </Suspense>
   );
