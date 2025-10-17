@@ -1,7 +1,8 @@
-import { BookData } from "@/types";
+import { BookData, ReviewData } from "@/types";
 import style from "./page.module.css";
 import NotFound from "@/app/not-found";
-import { createReviewAction } from "@/actions/create-review.action";
+import ReviewItem from "@/components/review-item";
+import ReviewEditor from "@/components/review-editor";
 
 // Next에서 약속된 변수(dynamicParams = false) : generateStaticParams에서 정의된 URL외의 나머지를 dynamic하게 처리 X -> 렌더링 안됨(404)
 // export const dynamicParams = true;
@@ -50,18 +51,22 @@ async function BookDetail({ bookId }: { bookId: string }) {
   );
 }
 
-// 서버 액션으로 간단하게 API를 대체할 수 있는 코드 : 서버측에서만 실행, 브라우저에는 전달만 -> 보안성
-function ReviewEditor({ bookId }: { bookId: string }) {
+async function ReviewList({ bookId }: { bookId: string }) {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_SERVER_URL}/review/book/${bookId}`
+  );
+
+  if (!response.ok) {
+    throw new Error(`Review fetch failed : ${response.statusText}`);
+  }
+
+  const reviews: ReviewData[] = await response.json();
+
   return (
     <section>
-      <form action={createReviewAction}>
-        {/* hidden attribute : 브라우저가 안보이는 인풋태그 -> 서버 액션에게 bookId라는 이름의 태그 제공. (id는 입/출력 필요 없기 때문) */}
-        {/* 서버 액션에 전달할 id값 */}
-        <input name="bookId" value={bookId} hidden readOnly />
-        <input required name="content" placeholder="리뷰 내용" />
-        <input required name="author" placeholder="작성자" />
-        <button type="submit">작성하기</button>
-      </form>
+      {reviews.map((review) => (
+        <ReviewItem key={`review-item-${review.id}`} {...review} />
+      ))}
     </section>
   );
 }
@@ -77,6 +82,7 @@ export default async function Page({
     <div className={style.container}>
       <BookDetail bookId={id} />
       <ReviewEditor bookId={id} />
+      <ReviewList bookId={id} />
     </div>
   );
 }
