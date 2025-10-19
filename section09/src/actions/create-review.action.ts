@@ -1,7 +1,6 @@
 "use server";
 
-import delay from "@/utils/delay";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidateTag } from "next/cache";
 
 // 서버 액션으로 간단하게 API를 대체할 수 있는 코드 : 서버측에서만 실행, 브라우저에는 전달만 -> 보안성
 export async function createReviewAction(_: any, formData: FormData) {
@@ -18,7 +17,6 @@ export async function createReviewAction(_: any, formData: FormData) {
     };
   }
   try {
-    await delay(2000);
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_SERVER_URL}/review`,
       {

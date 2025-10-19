@@ -12,9 +12,22 @@ import { Metadata } from "next";
 // static 페이지로서 빌드 타임에 미리 생성함. (미리 정적 URL의 정보를 빌드타임에 넘겨주는 느낌) -> 서버 측에 Pull Route Cache
 // 주의 : generateStaticParams에서 URL 파라미터는 항상 string으로 넣어줘야함
 // 주의 : 페이지 컴포넌트 내부에 데이터 캐싱이 설정되지 않은 페이지도 강제로 static페이지로 설정됨
-// export function generateStaticParams() {
-//   return [{ id: "1" }, { id: "2" }, { id: "3" }];
-// }
+export async function generateStaticParams() {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_SERVER_URL}/book`
+  );
+
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+
+  const books: BookData[] = await response.json();
+
+  // book page 정적 재생성 (ssg)
+  return books.map((book) => ({
+    id: book.id.toString(),
+  }));
+}
 
 async function BookDetail({ bookId }: { bookId: string }) {
   const response = await fetch(

@@ -1,14 +1,12 @@
 import BookItem from "@/components/book-item";
 import BookListSkeleton from "@/components/skeleton/book-list-skeleton";
 import { BookData } from "@/types";
-import delay from "@/utils/delay";
 import { Metadata } from "next";
 import { Suspense } from "react";
 
 async function SearchResult({ q }: { q: string }) {
   // 무조건 동적 페이지를 생성해야하는 페이지에서는 캐싱(데이터 캐시)만 되도록 설정
   // 해당 요청이 늦어지면, 전체 페이지 렌더링이 느려짐 -> 페이지 컴포넌트 스트리밍
-  await delay(3000);
 
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_SERVER_URL}/book/search?q=${q}`,

@@ -1,9 +1,8 @@
 import BookItem from "@/components/book-item";
 import style from "./page.module.css";
 import { BookData } from "@/types";
-import delay from "@/utils/delay";
-import { Suspense } from "react";
-import BookListSkeleton from "@/components/skeleton/book-list-skeleton";
+// import { Suspense } from "react";
+// import BookListSkeleton from "@/components/skeleton/book-list-skeleton";
 import { Metadata } from "next";
 
 // 특정 페이지의 유형을 강제로 Static, Dynamic 페이지로 설정
@@ -15,7 +14,6 @@ import { Metadata } from "next";
 // export const dynamic = "auto";
 
 async function AllBooks() {
-  await delay(1500);
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_SERVER_URL}/book`,
     { cache: "force-cache" }
@@ -34,7 +32,6 @@ async function AllBooks() {
   );
 }
 async function RecoBooks() {
-  await delay(3000);
   // cache의 아무 속성이 없으면 no-store가 기본 (Next.js v.15 ~ )
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_SERVER_URL}/book/random`
@@ -55,8 +52,8 @@ async function RecoBooks() {
   );
 }
 
-// 강제로 Dynamic Render
-export const dynamic = "force-dynamic";
+// 강제로 Dynamic Render -> Dynamic Route Segment
+// export const dynamic = "force-dynamic";
 
 // 약속된 이름의 변수 metadata : 변수에 저장된 값이 현재 페이지의 메타 데이터로 설정 -> 앱라우터에서의 메타 데이터
 export const metadata: Metadata = {
@@ -74,15 +71,15 @@ export default function Home() {
     <div className={style.container}>
       <section>
         <h3>지금 추천하는 도서</h3>
-        <Suspense fallback={<BookListSkeleton count={3} />}>
-          <RecoBooks />
-        </Suspense>
+        {/* <Suspense fallback={<BookListSkeleton count={3} />}> */}
+        <RecoBooks />
+        {/* </Suspense> */}
       </section>
       <section>
         <h3>등록된 모든 도서</h3>
-        <Suspense fallback={<BookListSkeleton count={3} />}>
-          <AllBooks />
-        </Suspense>
+        {/* <Suspense fallback={<BookListSkeleton count={3} />}> */}
+        <AllBooks />
+        {/* </Suspense> */}
       </section>
     </div>
   );
