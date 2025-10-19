@@ -4,6 +4,7 @@ import NotFound from "@/app/not-found";
 import ReviewItem from "@/components/review-item";
 import ReviewEditor from "@/components/review-editor";
 import Image from "next/image";
+import { Metadata } from "next";
 
 // Next에서 약속된 변수(dynamicParams = false) : generateStaticParams에서 정의된 URL외의 나머지를 dynamic하게 처리 X -> 렌더링 안됨(404)
 // export const dynamicParams = true;
@@ -78,6 +79,36 @@ async function ReviewList({ bookId }: { bookId: string }) {
       ))}
     </section>
   );
+}
+
+// fetch(/book/id)를 중복 요청 한것 아니냐? -> NO. Request Memoization으로 한 페이지에서는 중복 요청 X
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_SERVER_URL}/book/${id}`
+  );
+
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+
+  const book: BookData = await response.json();
+
+  console.log(book.title);
+
+  return {
+    title: `${book.title} - 한입북스`,
+    description: `${book.description}`,
+    openGraph: {
+      title: `${book.title} - 한입북스`,
+      description: `${book.description}`,
+      images: ["/thumbnail.png"],
+    },
+  };
 }
 
 export default async function Page({
