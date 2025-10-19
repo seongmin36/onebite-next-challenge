@@ -1,3 +1,4 @@
+// CSR에서 인터셉팅 라우트가 되기 때문에 client모드로 설정
 "use client";
 
 import { ReactNode, useEffect, useRef } from "react";
